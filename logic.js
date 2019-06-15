@@ -39,7 +39,7 @@ var myMap = L.map("map", {
 
 // all earthquakes in the last 30 days
 var queryUrl = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson';
-// queryUrl = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson'; // testing
+
 // Perform a GET request to the query URL
 d3.json(queryUrl, function (data) {
   // initialize the map
