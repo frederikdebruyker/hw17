@@ -39,7 +39,7 @@ var myMap = L.map("map", {
 
 // all earthquakes in the last 30 days
 var queryUrl = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson';
-queryUrl = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson'; // testing
+// queryUrl = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson'; // testing
 // Perform a GET request to the query URL
 d3.json(queryUrl, function (data) {
   // initialize the map
@@ -97,44 +97,41 @@ function intensityColor(magnitude) {
   return [color]
 }
 
-// // add legend
-// var legend = L.control({position: 'bottomright'});
-//     legend.onAdd = function (map) {
+// add legend
+var legend = L.control({ position: 'bottomright' });
+legend.onAdd = function (map) {
 
-//     var div = L.DomUtil.create('div', 'info legend');
-//     labels = ['<strong>Magnitude</strong>'],
-//     magnitudes = ['0-1','1-2','2-3','3-4','4-5','5+'];
+  var div = L.DomUtil.create('div', 'info legend');
+  labels = ['<strong>Magnitude</strong>'],
+    magnitudes = ['0-1', '1-2', '2-3', '3-4', '4-5', '5+'];
 
-//     for (var i = 0; i < magnitudes.length; i++) {
+  div.innerHTML +=
+    labels.push(
+      '<i class="square" style="background:' + "blue" + '"></i> ' +
+      '<p style="background-color:#00FF00;">' + magnitudes[0] + '</p>' +
+      '<p style="background-color:#6AFF00;">' + magnitudes[1] + '</p>' +
+      '<p style="background-color:#D4FF00;">' + magnitudes[2] + '</p>' +
+      '<p style="background-color:#FFC100;">' + magnitudes[3] + '</p>' +
+      '<p style="background-color:#FF5700;">' + magnitudes[4] + '</p>' +
+      '<p style="background-color:#FF0000;">' + magnitudes[5] + '</p>');
 
-//             div.innerHTML += 
-//             labels.push(
-//                 '<i class="square" style="background:' + "blue" + '"></i> ' +
-//             "text for legend");
-
-//         }
-//         div.innerHTML = labels.join('<br>');
-//     return div;
-//     };
-//     legend.addTo(map);
+  div.innerHTML = labels.join('<br>');
+  return div;
+};
+legend.addTo(myMap);
 
 // add name    
-L.control.Name = L.control.extend({
-  onAdd: function (map) {
-    var name = L.DomUtil.create('p');
+var author = L.control({ position: 'bottomleft' });
+author.onAdd = function (map) {
 
-    name.text = 'Frederik De Bruyker';
+  var div = L.DomUtil.create('div', 'name');
 
-    return name;
-  },
+  div.innerHTML = '<p>Frederik De Bruyker</p>';
+  return div;
+};
+author.addTo(myMap);
 
-  onRemove: function (map) {
-    // Nothing to do here
-  }
-});
-
-L.Control.Name = function (opts) {
-  return new L.Control.Name(opts);
-}
-
-L.Control.Name({ position: 'bottomleft' }).addTo(map);
+  // Create overlay object to hold our overlay layer
+  var overlayMaps = {
+    Earthquakes: earthquakes
+  };
