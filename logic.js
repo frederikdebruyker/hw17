@@ -1,4 +1,5 @@
 // Define satellite map / grayscale map / outdoors map layers
+// although only light is used in the delivery, I left the other 2 (as part of the optional hw) in for future reference
 var satellitemap = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
   attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
   maxZoom: 18,
@@ -38,22 +39,24 @@ var myMap = L.map("map", {
 
 // all earthquakes in the last 30 days
 var queryUrl = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson';
-// queryUrl = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson'; // testing
+queryUrl = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson'; // testing
 // Perform a GET request to the query URL
 d3.json(queryUrl, function (data) {
   // initialize the map
+  // L.rectangle([10,10],{})
   // Once we get a response, send the data.features object to the createFeatures function
   createFeatures(data.features);
 
 });
 
 function onEachFeature(feature, layer) {
-
+  // for each earthquake data PointerEvent, insert a circle
   L.circle([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {
     fillOpacity: 0.50,
     color: 'LightGray',
     fillColor: intensityColor(feature.properties.mag),
     radius: feature.properties.mag * 15000
+    // bind a popup with additional info to the circle
   }).bindPopup("<h3>" + feature.properties.place + "</h3><hr>" +
     "<p>Magnitude: " + feature.properties.mag + "</p>" +
     "<p>Date     : " + new Date(feature.properties.time) + "</p>").addTo(myMap);
@@ -94,3 +97,44 @@ function intensityColor(magnitude) {
   return [color]
 }
 
+// // add legend
+// var legend = L.control({position: 'bottomright'});
+//     legend.onAdd = function (map) {
+
+//     var div = L.DomUtil.create('div', 'info legend');
+//     labels = ['<strong>Magnitude</strong>'],
+//     magnitudes = ['0-1','1-2','2-3','3-4','4-5','5+'];
+
+//     for (var i = 0; i < magnitudes.length; i++) {
+
+//             div.innerHTML += 
+//             labels.push(
+//                 '<i class="square" style="background:' + "blue" + '"></i> ' +
+//             "text for legend");
+
+//         }
+//         div.innerHTML = labels.join('<br>');
+//     return div;
+//     };
+//     legend.addTo(map);
+
+// add name    
+L.control.Name = L.control.extend({
+  onAdd: function (map) {
+    var name = L.DomUtil.create('p');
+
+    name.text = 'Frederik De Bruyker';
+
+    return name;
+  },
+
+  onRemove: function (map) {
+    // Nothing to do here
+  }
+});
+
+L.Control.Name = function (opts) {
+  return new L.Control.Name(opts);
+}
+
+L.Control.Name({ position: 'bottomleft' }).addTo(map);
